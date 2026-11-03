@@ -859,7 +859,6 @@
             animation: fadeIn 0.4s ease;
         }
 
-        /* Estilos para los mensajes de la comunidad en pantalla */
         .community-feed {
             display: flex;
             flex-direction: column;
@@ -908,6 +907,59 @@
             font-size: 0.92rem;
             line-height: 1.6;
             word-break: break-word;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Estilo para las respuestas de la Autora */
+        .author-reply-box {
+            background: rgba(0, 131, 143, 0.06);
+            border-left: 3px solid var(--accent-turquoise);
+            padding: 0.8rem 1rem;
+            border-radius: 0 6px 6px 0;
+            margin-top: 0.8rem;
+            margin-left: 1.2rem;
+        }
+
+        .author-reply-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-turquoise);
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .author-reply-text {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .btn-reply-toggle {
+            background: none;
+            border: none;
+            color: var(--accent-orange);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 0.2rem 0;
+        }
+
+        .btn-reply-toggle:hover {
+            color: var(--accent-orange-hover);
+            text-decoration: underline;
+        }
+
+        .reply-form-container {
+            display: none;
+            margin-top: 0.8rem;
+            margin-left: 1.2rem;
+            padding: 0.8rem;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
         }
 
         @keyframes fadeIn {
@@ -1626,12 +1678,9 @@
                         </form>
                     </div>
 
-                    <!-- Contenedor donde aparecerán los mensajes guardados automáticamente -->
                     <div style="margin-bottom: 1.5rem;">
                         <h3 style="font-family: var(--font-title); color: var(--accent-turquoise); font-size: 1.4rem; margin-bottom: 1.2rem; text-align: center;">Mensajes de la comunidad</h3>
-                        <div id="communityFeedContainer" class="community-feed">
-                            <!-- Los comentarios se inyectan aquí con JavaScript -->
-                        </div>
+                        <div id="communityFeedContainer" class="community-feed"></div>
                     </div>
                 </div>
             </section>
@@ -1689,7 +1738,7 @@
             }
         }
 
-        /* --- Funciones de Comunidad con LocalStorage --- */
+        /* --- Funciones de Comunidad General con Respuestas de Autora --- */
         function loadCommunityComments() {
             const feedContainer = document.getElementById('communityFeedContainer');
             if (!feedContainer) return;
@@ -1701,33 +1750,43 @@
                 return;
             }
 
-            feedContainer.innerHTML = savedComments.map(c => `
+            feedContainer.innerHTML = savedComments.map((c, index) => `
                 <div class="community-comment-card">
                     <div class="comment-header">
                         <span class="comment-author">${escapeHTML(c.name)}</span>
                         ${c.story ? `<span class="comment-story-tag">📖 ${escapeHTML(c.story)}</span>` : ''}
                     </div>
                     <p class="comment-text">${escapeHTML(c.text)}</p>
+                    
+                    ${c.authorReply ? `
+                        <div class="author-reply-box">
+                            <div class="author-reply-header">✦ Respuesta de Narawinette (Autora)</div>
+                            <div class="author-reply-text">${escapeHTML(c.authorReply)}</div>
+                        </div>
+                    ` : `
+                        <button class="btn-reply-toggle" onclick="toggleReplyBox('comm', ${index})">Responder como Autora</button>
+                        <div id="commReplyForm-${index}" class="reply-form-container">
+                            <textarea id="commReplyText-${index}" rows="2" placeholder="Escribe tu respuesta..." style="width:100%; padding:0.5rem; border:1px solid var(--border-color); border-radius:4px; font-size:0.85rem; margin-bottom:0.5rem;"></textarea>
+                            <button class="btn-social" style="font-size:0.7rem; padding:0.4rem 1rem;" onclick="submitAuthorReply('comm', ${index})">Enviar respuesta</button>
+                        </div>
+                    `}
                 </div>
             `).join('');
         }
 
         function handleCommunitySubmit(event) {
             event.preventDefault();
-            
             const name = document.getElementById('commName').value.trim();
             const story = document.getElementById('commStory').value.trim();
             const text = document.getElementById('commText').value.trim();
 
             if (!name || !text) return;
 
-            const newComment = { name, story, text, date: Date.now() };
-            
+            const newComment = { name, story, text, authorReply: null, date: Date.now() };
             let savedComments = JSON.parse(localStorage.getItem('narawinette_community_comments')) || [];
-            savedComments.unshift(newComment); // Agrega el nuevo comentario al inicio
+            savedComments.unshift(newComment);
             localStorage.setItem('narawinette_community_comments', JSON.stringify(savedComments));
 
-            // Actualizar la pantalla de inmediato
             loadCommunityComments();
 
             const alertBox = document.getElementById('formSuccessAlert');
@@ -1736,19 +1795,94 @@
             setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
         }
 
-        // Función auxiliar para seguridad básica de texto (evita inyecciones HTML)
+        function toggleReplyBox(type, index) {
+            const formBox = document.getElementById(`${type}ReplyForm-${index}`);
+            if (formBox) {
+                formBox.style.display = formBox.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function submitAuthorReply(type, index, storyId = null) {
+            if (type === 'comm') {
+                const replyText = document.getElementById(`commReplyText-${index}`).value.trim();
+                if (!replyText) return;
+
+                let savedComments = JSON.parse(localStorage.getItem('narawinette_community_comments')) || [];
+                savedComments[index].authorReply = replyText;
+                localStorage.setItem('narawinette_community_comments', JSON.stringify(savedComments));
+                loadCommunityComments();
+            } else if (type === 'story') {
+                const replyText = document.getElementById(`storyReplyText-${storyId}-${index}`).value.trim();
+                if (!replyText) return;
+
+                const storageKey = `narawinette_story_comments_${storyId}`;
+                let storyComments = JSON.parse(localStorage.getItem(storageKey)) || [];
+                storyComments[index].authorReply = replyText;
+                localStorage.setItem(storageKey, JSON.stringify(storyComments));
+                loadModalComments(storyId);
+            }
+        }
+
+        /* --- Funciones de Comentarios por Historia en Modales con Respuestas --- */
+        function loadModalComments(storyId) {
+            const container = document.getElementById(`modalCommentsList-${storyId}`);
+            if (!container) return;
+
+            const storageKey = `narawinette_story_comments_${storyId}`;
+            const storyComments = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+            if (storyComments.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; font-style: italic; text-align: center;">Aún no hay comentarios en esta historia. ¡Sé el primero en opinar! 💬</p>`;
+                return;
+            }
+
+            container.innerHTML = storyComments.map((c, index) => `
+                <div style="background: #ffffff; border: 1px solid var(--border-color); padding: 0.9rem 1rem; border-radius: 6px; margin-bottom: 0.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div style="font-family: var(--font-title); font-size: 0.9rem; color: var(--accent-turquoise); font-weight: 700; margin-bottom: 0.2rem;">${escapeHTML(c.name)}</div>
+                    <div style="color: var(--text-main); font-size: 0.88rem; line-height: 1.5; word-break: break-word; margin-bottom: 0.6rem;">${escapeHTML(c.text)}</div>
+                    
+                    ${c.authorReply ? `
+                        <div class="author-reply-box">
+                            <div class="author-reply-header">✦ Respuesta de Narawinette (Autora)</div>
+                            <div class="author-reply-text">${escapeHTML(c.authorReply)}</div>
+                        </div>
+                    ` : `
+                        <button class="btn-reply-toggle" onclick="toggleReplyBox('story-${storyId}', ${index})">Responder como Autora</button>
+                        <div id="story-${storyId}ReplyForm-${index}" class="reply-form-container">
+                            <textarea id="storyReplyText-${storyId}-${index}" rows="2" placeholder="Escribe tu respuesta..." style="width:100%; padding:0.5rem; border:1px solid var(--border-color); border-radius:4px; font-size:0.85rem; margin-bottom:0.5rem;"></textarea>
+                            <button class="btn-social" style="font-size:0.7rem; padding:0.4rem 1rem;" onclick="submitAuthorReply('story', ${index}, '${storyId}')">Enviar respuesta</button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        function handleModalCommentSubmit(event, storyId, storyTitle) {
+            event.preventDefault();
+            const nameInput = document.getElementById(`modalCommName-${storyId}`).value.trim();
+            const textInput = document.getElementById(`modalCommText-${storyId}`).value.trim();
+            const successBox = document.getElementById(`modalFormSuccessAlert-${storyId}`);
+
+            if (!nameInput || !textInput) return;
+
+            const newComment = { name: nameInput, text: textInput, authorReply: null, date: Date.now() };
+            const storageKey = `narawinette_story_comments_${storyId}`;
+            
+            let storyComments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            storyComments.unshift(newComment);
+            localStorage.setItem(storageKey, JSON.stringify(storyComments));
+
+            loadModalComments(storyId);
+
+            successBox.style.display = 'block';
+            event.target.reset();
+            setTimeout(() => { successBox.style.display = 'none'; }, 5000);
+        }
+
         function escapeHTML(str) {
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
             );
-        }
-
-        function handleModalCommentSubmit(event, storyTitle) {
-            event.preventDefault();
-            const successBox = document.getElementById('modalFormSuccessAlert');
-            successBox.style.display = 'block';
-            event.target.reset();
-            setTimeout(() => { successBox.style.display = 'none'; }, 5000);
         }
 
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -1807,21 +1941,26 @@
                     <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.4rem; font-size: 1.1rem; letter-spacing: 1px;">Deja un comentario sobre esta historia</h4>
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Comparte tu opinión o teoría sobre <b>${data.title}</b>.</p>
                     
-                    <div id="modalFormSuccessAlert" class="form-success-alert">
+                    <div id="modalFormSuccessAlert-${data.id}" class="form-success-alert">
                         ✨ ¡Muchas gracias! Tu comentario ha sido enviado con éxito.
                     </div>
 
-                    <form onsubmit="handleModalCommentSubmit(event, '${data.title}')">
+                    <form onsubmit="handleModalCommentSubmit(event, '${data.id}', '${data.title}')">
                         <div class="form-group" style="margin-bottom: 0.8rem;">
-                            <label for="modalCommName" style="font-size: 0.75rem;">Tu nombre / usuario</label>
-                            <input type="text" id="modalCommName" required placeholder="Tu nombre..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;">
+                            <label for="modalCommName-${data.id}" style="font-size: 0.75rem;">Tu nombre / usuario</label>
+                            <input type="text" id="modalCommName-${data.id}" required placeholder="Tu nombre..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;">
                         </div>
                         <div class="form-group" style="margin-bottom: 0.8rem;">
-                            <label for="modalCommText" style="font-size: 0.75rem;">Tu comentario</label>
-                            <textarea id="modalCommText" rows="3" required placeholder="Escribe tu opinión..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;"></textarea>
+                            <label for="modalCommText-${data.id}" style="font-size: 0.75rem;">Tu comentario</label>
+                            <textarea id="modalCommText-${data.id}" rows="3" required placeholder="Escribe tu opinión..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;"></textarea>
                         </div>
                         <button type="submit" class="btn-social" style="font-size: 0.75rem; padding: 0.5rem 1.2rem; width: 100%; text-align: center;">Enviar comentario</button>
                     </form>
+
+                    <div style="margin-top: 1.5rem;">
+                        <h5 style="font-family: var(--font-title); color: var(--accent-turquoise); font-size: 0.95rem; margin-bottom: 0.8rem; letter-spacing: 0.5px;">Comentarios de lectores</h5>
+                        <div id="modalCommentsList-${data.id}"></div>
+                    </div>
                 </div>
 
                 <div style="text-align: right; margin-top: 2rem;">
@@ -1829,6 +1968,7 @@
                 </div>
             `;
             modal.style.display = 'flex';
+            loadModalComments(data.id);
         }
 
         function closeModal() { document.getElementById('storyModal').style.display = 'none'; }
@@ -1962,7 +2102,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadStoriesData();
-            loadCommunityComments(); // Cargar los comentarios guardados al abrir la página
+            loadCommunityComments();
         });
     </script>
 </body>
