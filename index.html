@@ -1315,7 +1315,7 @@
                 <div class="lineup-card">
                     <div class="lineup-tag">NARAWINETTE · LINE UP 2027</div>
                     <h2 class="lineup-title">Destined to You</h2>
-                    <div class="lineup-quote" style="margin-top: 0.8rem;">«Podíamos negar el vínculo y fingir que fue un error. Pero nuestros instintos ya nos habían elegido».</div>
+                    <div class="lineup-quote" style="margin-top: 0.8rem;">«Podíamos negar el vínculo y fingir que fue un error. Pero nuestros instintos ya te habían elegido».</div>
                     <hr class="lineup-divider">
                     <div class="lineup-cover-box">
                         <div class="lineup-section-title" style="margin-bottom: 0.8rem;">PORTADA PRINCIPAL</div>
@@ -1581,6 +1581,17 @@
             setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
         }
 
+        function handleModalCommentSubmit(event, storyTitle) {
+            event.preventDefault();
+            const nameInput = document.getElementById('modalCommName').value;
+            const textInput = document.getElementById('modalCommText').value;
+            const successBox = document.getElementById('modalFormSuccessAlert');
+            
+            successBox.style.display = 'block';
+            event.target.reset();
+            setTimeout(() => { successBox.style.display = 'none'; }, 5000);
+        }
+
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         window.addEventListener('scroll', () => {
@@ -1632,6 +1643,28 @@
                 <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.8rem; font-size: 1.1rem; letter-spacing: 1px;">Sinopsis Completa</h4>
                 <div style="margin-bottom: 1.8rem;">${fullSynopsisFormatted}</div>
                 ${triviaFormatted}
+                
+                <div style="background: rgba(0, 131, 143, 0.04); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                    <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.4rem; font-size: 1.1rem; letter-spacing: 1px;">Deja un comentario sobre esta historia</h4>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Comparte tu opinión o teoría sobre <b>${data.title}</b>.</p>
+                    
+                    <div id="modalFormSuccessAlert" class="form-success-alert">
+                        ✨ ¡Muchas gracias! Tu comentario ha sido enviado con éxito.
+                    </div>
+
+                    <form onsubmit="handleModalCommentSubmit(event, '${data.title}')">
+                        <div class="form-group" style="margin-bottom: 0.8rem;">
+                            <label for="modalCommName" style="font-size: 0.75rem;">Tu nombre / usuario</label>
+                            <input type="text" id="modalCommName" required placeholder="Tu nombre..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.8rem;">
+                            <label for="modalCommText" style="font-size: 0.75rem;">Tu comentario</label>
+                            <textarea id="modalCommText" rows="3" required placeholder="Escribe tu opinión..." style="padding: 0.6rem 0.8rem; font-size: 0.9rem;"></textarea>
+                        </div>
+                        <button type="submit" class="btn-social" style="font-size: 0.75rem; padding: 0.5rem 1.2rem; width: 100%; text-align: center;">Enviar comentario</button>
+                    </form>
+                </div>
+
                 <div style="text-align: right; margin-top: 2rem;">
                     <a href="${data.link}" target="_blank" class="btn-social" style="display: inline-block;">LEER EN WATTPAD &rarr;</a>
                 </div>
