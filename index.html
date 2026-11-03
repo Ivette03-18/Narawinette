@@ -1616,10 +1616,17 @@
             }
 
             body.innerHTML = `
-                <div style="font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-turquoise); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">${data.genre} · ${data.status}</div>
-                <h2 style="font-family: var(--font-serif); font-size: 2.2rem; color: var(--text-main); margin-bottom: 0.8rem; font-weight: 600; line-height: 1.2;">${data.title}</h2>
-                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-                    <strong>Pareja:</strong> ${data.pair} | <strong>Capítulos:</strong> ${data.chapters} ${data.reads ? `| <strong>Lecturas:</strong> ${data.reads}` : ''}
+                <div style="display: flex; gap: 1.8rem; flex-wrap: wrap; align-items: flex-start; margin-bottom: 1.5rem;">
+                    <div style="flex: 0 0 160px; max-width: 160px; margin: 0 auto;">
+                        <img src="${data.cover}" alt="${data.title}" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.1); object-fit: cover;">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <div style="font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-turquoise); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">${data.genre} · ${data.status}</div>
+                        <h2 style="font-family: var(--font-serif); font-size: 2.2rem; color: var(--text-main); margin-bottom: 0.8rem; font-weight: 600; line-height: 1.2;">${data.title}</h2>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">
+                            <strong>Pareja:</strong> ${data.pair} | <strong>Capítulos:</strong> ${data.chapters} ${data.reads ? `| <strong>Lecturas:</strong> ${data.reads}` : ''}
+                        </div>
+                    </div>
                 </div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
                 <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.8rem; font-size: 1.1rem; letter-spacing: 1px;">Sinopsis Completa</h4>
