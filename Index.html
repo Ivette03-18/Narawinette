@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NARAWINETTE — Historias entre la realidad y la ficción</title>
+    <link rel="icon" href="LogoPP.png" type="image/png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #f4f8f9;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --bg-modal: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #455a64;
+            --accent-turquoise: #00838f;
+            --accent-turquoise-hover: #006064;
+            --accent-orange: #ff7043;
+            --accent-orange-hover: #f4511e;
+            --border-color: rgba(0, 131, 143, 0.2);
+            --border-hover: rgba(0, 131, 143, 0.5);
+            --font-title: 'Cinzel', serif;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-weight: 300;
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(650px, 90vw);
+            height: min(650px, 90vw);
+            background-image: url('LogoPP.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.035;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.8rem 2rem;
+            padding-top: max(0.8rem, env(safe-area-inset-top));
+            padding-left: max(1.5rem, env(safe-area-inset-left));
+            padding-right: max(1.5rem, env(safe-area-inset-right));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .logo-img {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--accent-turquoise);
+        }
+
+        .logo-text {
+            font-family: var(--font-title);
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: var(--accent-turquoise);
+            font-weight: 700;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-turquoise);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-orange);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            padding-left: max(1.5rem, env(safe-area-inset-left));
+            padding-right: max(1.5rem, env(safe-area-inset-right));
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            padding: 3.5rem 0;
+            border-bottom: 1px solid rgba(0, 131, 143, 0.1);
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            padding: 6rem 1.2rem 5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-image: 
+                linear-gradient(to bottom, rgba(244, 248, 249, 0.1) 0%, rgba(244, 248, 249, 0.55) 75%, var(--bg-dark) 100%),
+                url('FondoPP.jpg');
+            background-size: cover;
+            background-position: center 25%;
+            background-repeat: no-repeat;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .hero-content {
+            max-width: 750px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 2.5rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero h1 {
+            font-family: var(--font-title);
+            font-size: clamp(2.2rem, 6vw, 3.2rem);
+            letter-spacing: clamp(3px, 1vw, 6px);
+            color: var(--accent-turquoise);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .hero .subtitle {
+            font-family: var(--font-serif);
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            font-style: italic;
+            color: var(--text-main);
+            margin-bottom: 1.2rem;
+        }
+
+        .hero .intro {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--text-muted);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 400;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-social {
+            background-color: var(--accent-orange);
+            border: none;
+            padding: 0.7rem 1.4rem;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 112, 67, 0.3);
+            border-radius: 4px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn-social:hover {
+            background-color: var(--accent-orange-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 112, 67, 0.4);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--accent-turquoise);
+            color: var(--accent-turquoise);
+            padding: 0.6rem 1.4rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-turquoise);
+            color: #fff;
+        }
+
+        .section-title {
+            font-family: var(--font-title);
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            letter-spacing: 2px;
+            color: var(--accent-turquoise);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background-color: var(--accent-orange);
+        }
+
+        .search-container {
+            max-width: 450px;
+            margin: 0 auto 2rem auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            padding-left: 2.8rem;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            box-shadow: 0 4px 15px rgba(0, 131, 143, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-turquoise);
+            box-shadow: 0 4px 20px rgba(0, 131, 143, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-turquoise);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .featured-card, .story-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 131, 143, 0.05);
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .featured-card:hover, .story-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(255, 112, 67, 0.15);
+        }
+
+        .reads-badge {
+            position: absolute;
+            top: 1.8rem;
+            right: 1.8rem;
+            background: rgba(255, 112, 67, 0.92);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(255, 112, 67, 0.3);
+            z-index: 2;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.6rem 1rem;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            border-color: var(--accent-turquoise);
+            color: #fff;
+            background: var(--accent-turquoise);
+        }
+
+        .couple-group {
+            margin-bottom: 3rem;
+        }
+
+        .couple-header {
+            font-family: var(--font-title);
+            font-size: 1.3rem;
+            color: var(--accent-turquoise);
+            border-bottom: 2px solid var(--accent-turquoise);
+            padding-bottom: 0.4rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1.5px;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 360px;
+            overflow: hidden;
+            margin-bottom: 1.2rem;
+            border-radius: 4px;
+            background: #e0f2f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .story-card:hover .cover-img, .featured-card:hover .cover-img {
+            transform: scale(1.03);
+        }
+
+        .story-genre {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent-turquoise);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .story-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+            line-height: 1.2;
+            font-weight: 600;
+        }
+
+        .story-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        .story-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0, 131, 143, 0.1);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .btn-read {
+            color: var(--accent-orange);
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-read:hover { color: var(--accent-orange-hover); }
+
+        .load-more-wrapper {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .btn-load-more {
+            background: transparent;
+            border: 2px solid var(--accent-turquoise);
+            color: var(--accent-turquoise);
+            padding: 0.8rem 2rem;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .btn-load-more:hover {
+            background: var(--accent-turquoise);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 131, 143, 0.2);
+        }
+
+        .sagas-container {
+            display: none;
+            grid-column: 1 / -1;
+            gap: 2.5rem;
+        }
+
+        .saga-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.8rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 131, 143, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .saga-title {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            color: var(--accent-turquoise);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-orange);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .playlist-group {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 131, 143, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .playlist-group-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--accent-turquoise);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .playlist-group-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .playlist-card-item h4 {
+            font-family: var(--font-title);
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .blog-grid {
+            display: grid;
+            gap: 1.8rem;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .blog-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .blog-date {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-title {
+            font-family: var(--font-serif);
+            font-size: 1.7rem;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .announcement-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .announcement-img-container {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .announcement-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .announcement-img:hover {
+            transform: scale(1.02);
+        }
+
+        .lineup-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 850px;
+            margin: 0 auto 3rem auto;
+            box-shadow: 0 10px 35px rgba(0, 131, 143, 0.06);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .lineup-tag {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .lineup-title {
+            font-family: var(--font-title);
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            color: var(--text-main);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+
+        .lineup-quote {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--accent-turquoise);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .lineup-divider {
+            border: 0;
+            border-top: 1px solid rgba(0, 131, 143, 0.15);
+            margin: 1.8rem 0;
+        }
+
+        .lineup-section-title {
+            font-family: var(--font-title);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .lineup-cover-box {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .lineup-cover-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 520px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .lineup-grid-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .lineup-info-card {
+            background: #f8fafb;
+            border: 1px solid rgba(0, 131, 143, 0.15);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+        }
+
+        .lineup-info-card-label {
+            font-size: 0.72rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .lineup-info-card-val {
+            font-size: 0.92rem;
+            color: var(--text-main);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .lineup-tropes-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .lineup-trope-badge {
+            background: rgba(0, 131, 143, 0.08);
+            color: var(--accent-turquoise);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 1px solid rgba(0, 131, 143, 0.2);
+        }
+
+        .lineup-footer-note {
+            margin-top: 2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(0, 131, 143, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .community-wrapper {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .community-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2.2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .community-form-card h3 {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            color: var(--accent-turquoise);
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+
+        .community-form-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: #ffffff;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-turquoise);
+        }
+
+        .form-success-alert {
+            display: none;
+            background: rgba(0, 131, 143, 0.12);
+            border: 1px solid var(--accent-turquoise);
+            color: var(--accent-turquoise);
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .about-box, .contact-box {
+            max-width: 750px;
+            margin: 0 auto;
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2.2rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .about-box h3, .contact-box h3 {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            color: var(--accent-turquoise);
+            margin-bottom: 1.2rem;
+        }
+
+        .about-box p, .contact-box p {
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-modal);
+            border: 1px solid var(--accent-turquoise);
+            max-width: 750px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 2.2rem 1.8rem;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+        }
+
+        .close-modal:hover { color: var(--accent-orange); }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-turquoise);
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-orange);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem 1.5rem;
+            padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 4rem;
+            background: #ffffff;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                justify-content: center;
+                text-align: center;
+                padding: 0.8rem 1rem;
+            }
+
+            .nav-controls {
+                width: 100%;
+                justify-content: center;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: center;
+                gap: 0.8rem;
+                overflow-x: auto;
+                padding-bottom: 0.2rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            nav a {
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+
+            .hero {
+                padding: 4.5rem 1rem 3.5rem;
+            }
+
+            .hero-content {
+                padding: 1.8rem 1rem;
+            }
+
+            .cover-wrapper {
+                height: 320px;
+            }
+
+            .playlist-group {
+                padding: 1.5rem 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .lineup-card {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .community-form-card {
+                padding: 1.5rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container" onclick="switchView('home')">
+            <img src="LogoPP.png" alt="Logo Narawinette" class="logo-img">
+            <span class="logo-text">NARAWINETTE</span>
+        </div>
+        <div class="nav-controls">
+            <nav>
+                <ul>
+                    <li><a id="nav-home" class="active" onclick="switchView('home')">Inicio</a></li>
+                    <li><a id="nav-stories" onclick="switchView('stories')">Mis historias</a></li>
+                    <li><a id="nav-playlists" onclick="switchView('playlists')">Playlist</a></li>
+                    <li><a id="nav-announcements" onclick="switchView('announcements')">Anuncios</a></li>
+                    <li><a id="nav-lineup" onclick="switchView('lineup')">Line Up</a></li>
+                    <li><a href="#sobre-mi" onclick="switchView('home', 'sobre-mi')">Sobre mi</a></li>
+                    <li><a href="#contacto" onclick="switchView('home', 'contacto')">Contactos</a></li>
+                    <li><a id="nav-community" onclick="switchView('community')">Comunidad</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="view-home" class="page-view active">
+        <section class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>NARAWINETTE</h1>
+                <p class="subtitle">"Some stories are meant to be written. Others refuse to leave your head."</p>
+                <p class="intro">Bienvenido/a a mi pequeño rincón de historias. Aquí encontrarás mis fanfics, proyectos, playlists, personajes y un poquito de la persona detrás de cada escrito.</p>
+                
+                <div class="social-links">
+                    <a href="https://www.wattpad.com/user/narawinette" target="_blank" class="btn-social">Wattpad Profile</a>
+                    <button onclick="switchView('stories')" class="btn-outline">Catálogo de Obras</button>
+                </div>
+            </div>
+        </section>
+
+        <div class="container">
+            <section id="destacadas">
+                <h2 class="section-title">Historias Destacadas</h2>
+                <div class="featured-grid" id="featuredContainer"></div>
+            </section>
+
+            <section id="blog">
+                <h2 class="section-title">Diario de Escritora</h2>
+                <div class="blog-grid">
+                    <article class="blog-card">
+                        <div class="blog-date">Detrás de la Escritora</div>
+                        <h3 class="blog-title">Cómo nació Narawinette</h3>
+                        <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                            Hola, soy Ivy, mejor conocida en el mundo de la escritura como <b>Narawinette</b>.
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            Narawinette nació como un espacio libre para dejar fluir mi imaginación y dar rienda suelta al <i>deluleo</i> sobre mis <i>ships</i> favoritas de la GMMTV. Si bien gran parte de mi trabajo se centra en <b>PondPhuwin</b> —no me culpen, son mi TOP #1 absoluto, mis papis, a quienes sigo desde la era de <i>Fish Upon The Sky</i>, su primera serie juntos—, mi corazón también alberga muchísimo amor para otras <i>ships</i> como <b>JimmySea</b>, <b>OhmPoon</b>, <b>PerthSanta</b>, <b>WilliamEst</b>, entre otras. Asimismo, admiro profundamente <i>ships</i> GL como <b>EmiBonnie</b> y <b>Jan-JingJing</b>.
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem; line-height: 1.7; font-style: italic; background: rgba(0, 131, 143, 0.05); padding: 0.8rem 1rem; border-left: 3px solid var(--accent-turquoise); border-radius: 0 4px 4px 0;">
+                            Respecto a JoongDunk y AouBoom, a quienes apoyé firmemente como pareja en pantalla hasta el 19 de octubre, hoy sigo acompañando y respaldando la carrera de los cuatro actores de manera individual, siempre con el mismo respeto, cariño y admiración de siempre.
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            Desde que empecé a escribir estas historias, no ha habido un solo día en que no me asalten nuevas tramas o ideas para nuevos capítulos. Si hay algo que tengo claro es que todo se crea desde el aspecto ficticio; aunque a veces tomo pequeños guiños de la vida real de los actores, solo los uso para evocar la esencia de los chicos dentro de mi propio universo.
+                        </p>
+                        <p style="font-size: 0.9rem; color: var(--accent-orange); font-weight: 600; text-align: right; margin-top: 1.5rem;">
+                            ✦ ¡Gracias por acompañarme en este viaje!
+                        </p>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-date">Detrás de la Historia</div>
+                        <h3 class="blog-title">Cómo nace cada historia</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            El proceso de creación de cada obra es único e impredecible. Ninguna historia nace del mismo modo ni a la misma velocidad: algunas exigen meses de maduración y planificación, mientras que otras fluyen con tanta intensidad que nacen en cuestión de horas.
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            Antes de anunciar o publicar una obra de varios capítulos, me gusta trabajar con un margen de seguridad y tener varios capítulos preescritos para cuidar la calidad y el ritmo de actualización. Por el contrario, en el caso de los <i>One Shots</i>, el proceso suele ser más visceral: muchas veces la historia se publica el mismo día en que le pongo el punto final.
+                        </p>
+                        <h4 style="font-family: var(--font-title); font-size: 1.05rem; color: var(--accent-turquoise); margin: 1.2rem 0 0.6rem; letter-spacing: 1px;">¿Cómo decido el formato de una obra?</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.8rem; line-height: 1.7;">
+                            Antes de escribir, realizo un análisis estructurado de la trama y su potencial de desarrollo:
+                        </p>
+                        <ul style="color: var(--text-muted); font-size: 0.88rem; padding-left: 1.2rem; margin-bottom: 1rem; line-height: 1.7;">
+                            <li style="margin-bottom: 0.4rem;"><b>Proyectos Multicapítulo:</b> Si el análisis demuestra que la evolución emocional de los personajes y el conflicto principal requieren más de 5 capítulos para desarrollarse de manera fluida y coherente, se decide estructurarla como una obra larga.</li>
+                            <li style="margin-bottom: 0.4rem;"><b>One Shots (1 a 3 capítulos):</b> Si la premisa se concentra en un momento, una emoción o un punto de inflexión específico, se condensa en un formato corto e intenso.</li>
+                        </ul>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            Sin embargo, los personajes a veces tienen sus propios planes. Han existido ocasiones en las que historias concebidas como un único capítulo o un relato corto terminaron exigiendo más espacio (como ocurrió con <i>Drunk Text</i> o <i>Until I Found You</i>), transformándose en relatos extendidos o recibiendo capítulos extras para explorar qué ocurre con sus vidas después del final oficial.
+                        </p>
+                        <p style="font-size: 0.85rem; color: var(--accent-turquoise); font-weight: 500; font-style: italic; text-align: center; margin-top: 1rem;">
+                            Escribir es un equilibrio constante entre planificación estructural y libertad creativa. ✦
+                        </p>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-date">Notas del Autor</div>
+                        <h3 class="blog-title">Nuevos horizontes y proyectos</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500; line-height: 1.7; margin-bottom: 1.2rem;">
+                            Próximamente Line Up de los próximos proyectos para el año 2027.
+                        </p>
+                        <button onclick="switchView('lineup')" class="btn-social" style="font-size: 0.75rem; padding: 0.5rem 1rem;">Ver Line Up &rarr;</button>
+                    </article>
+                </div>
+            </section>
+
+            <section id="sobre-mi">
+                <div class="about-box">
+                    <h3>Sobre mi</h3>
+                    <p style="font-size: 1.1rem; color: var(--text-main); font-family: var(--font-serif); font-style: italic;">“Hola, soy Ivy, escritora de historias que probablemente empezaron con '¿y si...?' y terminaron convirtiéndose en 30 capítulos.”</p>
+                    <p>Creadora de mundos emocionales, diálogos profundos y romances que se sienten como hogar. Escribir es la forma en que los personajes que habitan mi cabeza encuentran paz en el papel.</p>
+                </div>
+            </section>
+
+            <section id="contacto">
+                <div class="contact-box">
+                    <h3>Contactos y Comunidad</h3>
+                    <p>¿Quieres decirme algo sobre una historia, unirte a los espacios de lectura o dejar tu opinión? Encuéntrame y conversemos en mis redes y canales oficiales.</p>
+                    <div class="social-links" style="margin-top: 2rem;">
+                        <a href="https://www.wattpad.com/user/narawinette" target="_blank" class="btn-social">Wattpad</a>
+                        <a href="https://whatsapp.com/channel/0029VbBxPNqFnSz5zq7hqv1k" target="_blank" class="btn-social">Canal WhatsApp</a>
+                        <a href="https://chat.whatsapp.com/I6xJQFZzKh8AEkBxWZgaCX?s=cl&p=a&mlu=4&ilr=4" target="_blank" class="btn-social">Grupo WhatsApp</a>
+                        <a href="https://www.instagram.com/narawinette?dlrf=Zzc2bG9ubm9uYTh4" target="_blank" class="btn-social">Instagram</a>
+                        <a href="https://www.tiktok.com/@pondphuwin_narawinnie?_r=1&_t=ZS-9AjjF5uPraZ" target="_blank" class="btn-social">TikTok</a>
+                        <a href="https://x.com/ivytang0105" target="_blank" class="btn-social">X (Twitter)</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="view-stories" class="page-view">
+        <div class="container">
+            <section id="historias" style="border-bottom: none; padding-top: 1.5rem;">
+                <h2 class="section-title">Catálogo de Obras</h2>
+                
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="shipSearchInput" class="search-input" placeholder="Buscar por ship (ej. PondPhuwin, TheePeach)..." oninput="handleSearchInput()">
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-btn active" onclick="filterStories('all', event)">Todas</button>
+                    <button class="filter-btn" onclick="filterStories('completa', event)">Completadas</button>
+                    <button class="filter-btn" onclick="filterStories('oneshot', event)">One Shot</button>
+                    <button class="filter-btn" onclick="filterStories('publicacion', event)">Publicación</button>
+                    <button class="filter-btn" onclick="filterStories('pausa', event)">En Pausa</button>
+                    <button class="filter-btn" onclick="filterStories('sagas', event)">Sagas / Universos</button>
+                </div>
+                
+                <div id="storiesContainer"></div>
+
+                <div class="sagas-container" id="sagasContainer">
+                    <div class="saga-block">
+                        <h3 class="saga-title">UNIVERSO MORE THAN</h3>
+                        <div id="sagaMoreThanContent"></div>
+                    </div>
+                    <div class="saga-block">
+                        <h3 class="saga-title">VECINOVERSO</h3>
+                        <div id="sagaVecinoversoContent"></div>
+                    </div>
+                    <div class="saga-block">
+                        <h3 class="saga-title">TRENDS OF DESTINY</h3>
+                        <div id="sagaTrendsContent"></div>
+                    </div>
+                </div>
+
+                <div class="load-more-wrapper" id="loadMoreWrapper">
+                    <button class="btn-load-more" id="btnLoadMore" onclick="loadMoreStories()">Mostrar más historias</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="view-lineup" class="page-view">
+        <div class="container">
+            <section style="border-bottom: none; padding-top: 1.5rem;">
+                <h2 class="section-title">Line Up</h2>
+                
+                <div class="lineup-card">
+                    <div class="lineup-tag">NARAWINETTE · LINE UP 2027</div>
+                    <h2 class="lineup-title">Of Bread and Bloodlines</h2>
+                    <div class="lineup-quote" style="margin-top: 0.8rem;">«La sangre les asignó sus lugares; el corazón se atrevió a cruzar la frontera.»</div>
+                    <hr class="lineup-divider">
+                    <div class="lineup-cover-box">
+                        <div class="lineup-section-title" style="margin-bottom: 0.8rem;">PORTADA PRINCIPAL</div>
+                        <img src="PP20271.jpg" alt="Portada Principal - Of Bread and Bloodlines" class="lineup-cover-img">
+                    </div>
+                    <div class="lineup-section-title">SOBRE LA HISTORIA</div>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        En un reino donde los apellidos determinan el futuro y las tradiciones pesan más que los deseos, <b>Phuwin Tangsakyueng</b> ha aprendido a ser el noble que su familia espera. Su vida está trazada entre obligaciones, apariencias y decisiones que nunca le han pertenecido, hasta que un encuentro inesperado con <b>Pond Naravit</b>, un humilde panadero, comienza a despertar en él preguntas que jamás se había permitido formular.
+                    </p>
+                    <div class="lineup-grid-info">
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">PAREJA PRINCIPAL</div>
+                            <div class="lineup-info-card-val">PondPhuwin</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Pond Naravit × Phuwin Tangsakyueng<br>(Panadero de clase baja × Joven noble)</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">UNIVERSO</div>
+                            <div class="lineup-info-card-val">AU Histórico / Fantasía Monárquica</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Reino ficticio ambientado en 1915. Segunda vida dentro de <i>Threads of Destiny</i> (tras <i>Heart of Marble</i>).</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">GÉNERO</div>
+                            <div class="lineup-info-card-val">Romance BL · Época · Fantasía</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Drama romántico, reencarnación y segundas oportunidades.</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">FORMATO</div>
+                            <div class="lineup-info-card-val">Novela por Capítulos (Wattpad)</div>
+                        </div>
+                    </div>
+                    <div class="lineup-section-title" style="margin-top: 1.8rem;">EN ESTA HISTORIA ENCONTRARÁS</div>
+                    <div class="lineup-tropes-wrapper">
+                        <span class="lineup-trope-badge">Forbidden Love</span>
+                        <span class="lineup-trope-badge">Slow Burn</span>
+                        <span class="lineup-trope-badge">Class Differences</span>
+                        <span class="lineup-trope-badge">Self-Discovery</span>
+                        <span class="lineup-trope-badge">Second Chances</span>
+                    </div>
+                    <div class="lineup-footer-note">
+                        <div>
+                            <span style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-orange); font-weight: 600; display: block;">PRÓXIMAMENTE EN WATTPAD</span>
+                            <b>Publicación estimada:</b> Primer semestre de 2027 (Abril - Junio 2027)
+                        </div>
+                        <div style="font-style: italic; color: var(--accent-turquoise);">Escrita por Narawinette</div>
+                    </div>
+                </div>
+
+                <div class="lineup-card">
+                    <div class="lineup-tag">NARAWINETTE · LINE UP 2027</div>
+                    <h2 class="lineup-title">The Plans of Destiny</h2>
+                    <div class="lineup-quote" style="margin-top: 0.8rem;">«Algunos encuentros no estaban en nuestros planes.»</div>
+                    <hr class="lineup-divider">
+                    <div class="lineup-cover-box">
+                        <div class="lineup-section-title" style="margin-bottom: 0.8rem;">PORTADA PRINCIPAL</div>
+                        <img src="PPW20271.jpg" alt="Portada Principal - The Plans of Destiny" class="lineup-cover-img">
+                    </div>
+                    <div class="lineup-section-title">SOBRE LA HISTORIA</div>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        <b>Nuengdiao KiattraKulmethee</b> tiene una vida privilegiada, un apellido que abre todas las puertas y un carácter que puede convertir cualquier día en una batalla. Lo último que desea es tener un guardaespaldas siguiéndolo a todas partes. Sin embargo, Palm llega a su vida para cumplir una obligación que su padre mantiene con la poderosa familia KiattraKulmethee, y su presencia se convierte rápidamente en una molestia que Nueng está decidido a eliminar.
+                    </p>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        Palm, disciplinado y de paciencia inquebrantable, no piensa dejarse intimidar por los caprichos de su nuevo protegido. Entre discusiones, desafíos y una convivencia inevitable, ambos descubrirán que detrás de sus diferencias existen heridas que ninguno se atreve a mostrar. Lo que comienza como una relación marcada por el rechazo pronto se transforma en un sentimiento imposible de ignorar. Porque, a veces, el destino tiene planes que ni el orgullo ni la razón pueden cambiar.
+                    </p>
+                    <div class="lineup-grid-info">
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">PAREJA PRINCIPAL</div>
+                            <div class="lineup-info-card-val">PalmNueng</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Palm × Nuengdiao</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">UNIVERSO</div>
+                            <div class="lineup-info-card-val">AU Contemporáneo</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">GÉNERO</div>
+                            <div class="lineup-info-card-val">Romance · Drama · Comedia Romántica</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Tensión emocional y conflictos familiares.</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">FORMATO</div>
+                            <div class="lineup-info-card-val">Novela por Capítulos (Wattpad)</div>
+                        </div>
+                    </div>
+                    <div class="lineup-section-title" style="margin-top: 1.8rem;">EN ESTA HISTORIA ENCONTRARÁS</div>
+                    <div class="lineup-tropes-wrapper">
+                        <span class="lineup-trope-badge">Enemies to Lovers</span>
+                        <span class="lineup-trope-badge">Forced Proximity</span>
+                        <span class="lineup-trope-badge">Guardaespaldas × Protegido</span>
+                        <span class="lineup-trope-badge">Opposites Attract</span>
+                    </div>
+                    <div class="lineup-footer-note">
+                        <div>
+                            <span style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-orange); font-weight: 600; display: block;">PRÓXIMAMENTE EN WATTPAD</span>
+                            <b>Publicación estimada:</b> Por definir (Sujeta a planificación)
+                        </div>
+                        <div style="font-style: italic; color: var(--accent-turquoise);">Escrita por Narawinette</div>
+                    </div>
+                </div>
+
+                <div class="lineup-card">
+                    <div class="lineup-tag">NARAWINETTE · LINE UP 2027</div>
+                    <h2 class="lineup-title">Destined to You</h2>
+                    <div class="lineup-quote" style="margin-top: 0.8rem;">«Podíamos culpar al celo, negar el vínculo y fingir que fue un error. Pero nuestros instintos ya te habían elegido».</div>
+                    <hr class="lineup-divider">
+                    <div class="lineup-cover-box">
+                        <div class="lineup-section-title" style="margin-bottom: 0.8rem;">PORTADA PRINCIPAL</div>
+                        <img src="PPW20272.jpg" alt="Portada Principal - Destined to You" class="lineup-cover-img">
+                    </div>
+                    <div class="lineup-section-title">SOBRE LA HISTORIA</div>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        Un beso detrás de una venda debería haber sido solamente una actividad de San Valentín. <b>Pond Naravit</b>, un alfa dominante de cuarto año acostumbrado a ser deseado, acepta participar en el Stand de los Besos por insistencia de sus mejores amigos. Sin embargo, uno de aquellos besos lo marca de una manera inexplicable. No puede ver a la persona detrás de la venda, pero recuerda sus labios y un aroma que despierta algo desconocido en su interior.
+                    </p>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        Lo que Pond ignora es que aquel desconocido es <b>Phuwin Tangsakyuen</b>, un alfa de tercer año que jamás ha estado con nadie y que llegó allí por culpa de un reto. Cuando sus celos se adelantan y sus instintos comienzan a descontrolarse, ambos intentan convencerse de que todo fue un error. Pero ¿cómo negar un destino que sus propios cuerpos reconocieron antes que ellos?
+                    </p>
+                    <div class="lineup-grid-info">
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">PAREJA PRINCIPAL</div>
+                            <div class="lineup-info-card-val">PondPhuwin</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Pond Naravit × Phuwin Tangsakyueng</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">UNIVERSO</div>
+                            <div class="lineup-info-card-val">AU Universitario Omegaverse Original</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">GÉNERO</div>
+                            <div class="lineup-info-card-val">Romance BL · Omegaverse</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">FORMATO</div>
+                            <div class="lineup-info-card-val">Novela por Capítulos (Wattpad)</div>
+                        </div>
+                    </div>
+                    <div class="lineup-section-title" style="margin-top: 1.8rem;">EN ESTA HISTORIA ENCONTRARÁS</div>
+                    <div class="lineup-tropes-wrapper">
+                        <span class="lineup-trope-badge">One Kiss Changes Everything</span>
+                        <span class="lineup-trope-badge">Destined Mates</span>
+                        <span class="lineup-trope-badge">Denial of Feelings</span>
+                    </div>
+                    <div class="lineup-footer-note">
+                        <div>
+                            <span style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-orange); font-weight: 600; display: block;">PRÓXIMAMENTE EN WATTPAD</span>
+                            <b>Publicación estimada:</b> Febrero de 2027.
+                        </div>
+                        <div style="font-style: italic; color: var(--accent-turquoise);">Escrita por Narawinette</div>
+                    </div>
+                </div>
+
+                <div class="lineup-card">
+                    <div class="lineup-tag">NARAWINETTE · LINE UP 2027</div>
+                    <h2 class="lineup-title">No todos los hogares tienen paredes</h2>
+                    <div class="lineup-quote" style="margin-top: 0.8rem;">«A veces, el hogar no es un lugar al que volver, sino una persona con la que quieres quedarte.»</div>
+                    <hr class="lineup-divider">
+                    <div class="lineup-cover-box">
+                        <div class="lineup-section-title" style="margin-bottom: 0.8rem;">PORTADA PRINCIPAL</div>
+                        <img src="PPW20273.jpg" alt="Portada Principal - No todos los hogares tienen paredes" class="lineup-cover-img">
+                    </div>
+                    <div class="lineup-section-title">SOBRE LA HISTORIA</div>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        <b>Gemini</b> siempre ha crecido rodeado de cuidado, rutinas y un lugar al que llamar hogar. <b>Fourth</b>, en cambio, aprendió desde temprano a no quedarse en ningún sitio demasiado tiempo.
+                    </p>
+                    <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                        Cuando sus mundos se cruzan, ambos se ven obligados a cuestionar lo que creen saber sobre pertenecer, amar y elegir. Porque no todos los hogares tienen paredes... algunos se construyen cuando decides quedarte.
+                    </p>
+                    <div class="lineup-grid-info">
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">PAREJA PRINCIPAL</div>
+                            <div class="lineup-info-card-val">GeminiFourth</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-top: 0.3rem;">Gemini Norawit × Fourth Nattawat</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">UNIVERSO</div>
+                            <div class="lineup-info-card-val">AU Contemporáneo</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">GÉNERO</div>
+                            <div class="lineup-info-card-val">Romance BL · Slice of life</div>
+                        </div>
+                        <div class="lineup-info-card">
+                            <div class="lineup-info-card-label">FORMATO</div>
+                            <div class="lineup-info-card-val">Novela Corta por Capítulos</div>
+                        </div>
+                    </div>
+                    <div class="lineup-section-title" style="margin-top: 1.8rem;">EN ESTA HISTORIA ENCONTRARÁS</div>
+                    <div class="lineup-tropes-wrapper">
+                        <span class="lineup-trope-badge">Opposites Attract</span>
+                        <span class="lineup-trope-badge">Unexpected Encounter</span>
+                        <span class="lineup-trope-badge">Slow Burn</span>
+                    </div>
+                    <div class="lineup-footer-note">
+                        <div>
+                            <span style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-orange); font-weight: 600; display: block;">PRÓXIMAMENTE EN WATTPAD</span>
+                            <b>Publicación estimada:</b> Diciembre de 2027
+                        </div>
+                        <div style="font-style: italic; color: var(--accent-turquoise);">Escrita por Narawinette</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="view-playlists" class="page-view">
+        <div class="container">
+            <section id="playlists-view" style="border-bottom: none; padding-top: 1.5rem;">
+                <h2 class="section-title">Playlist</h2>
+                <div class="playlist-group">
+                    <h3 class="playlist-group-title">More Than Just Us</h3>
+                    <p class="playlist-group-desc">Sumergite en los sentimientos, el vínculo y los aromas de Thee y Peach con sus listas de reproducción oficiales en Spotify.</p>
+                    <div class="playlist-grid">
+                        <div class="playlist-card-item">
+                            <h4>Playlist de Thee</h4>
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1VChoMN3LjEWGaWefr5rQv?utm_source=generator&si=c259f37f58e44d66" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                        <div class="playlist-card-item">
+                            <h4>Playlist de Peach</h4>
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5zBMbb6Bq5QkaOMY8If1bR?utm_source=generator&si=8ec3094a77584438" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="playlist-group">
+                    <h3 class="playlist-group-title">Until I Found You</h3>
+                    <p class="playlist-group-desc">Canciones que acompañan el camino de sanación, la paciencia de Pond y la reconexión con el amor de Phuwin.</p>
+                    <div class="playlist-grid">
+                        <div class="playlist-card-item">
+                            <h4>Playlist de Pond</h4>
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0enOA3hNkm8jPMRRQCgu8t?utm_source=generator&si=84cb5ef672694a87" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                        <div class="playlist-card-item">
+                            <h4>Playlist de Phuwin</h4>
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/56Ix2gDx5SbLcspoWL88uI?utm_source=generator&si=42647cb887f64f9a" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                        <div class="playlist-card-item">
+                            <h4>Playlist de Pond y Phuwin</h4>
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5jtJRIGpBWAdTv0c9EbFJx?utm_source=generator&si=70dc209a58c242c6" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="view-announcements" class="page-view">
+        <div class="container">
+            <section id="anuncios-view" style="border-bottom: none; padding-top: 1.5rem;">
+                <h2 class="section-title">Anuncios</h2>
+                <div class="blog-grid">
+                    <article class="blog-card">
+                        <div class="blog-date">Anuncio Oficial · 19 de Octubre de 2026</div>
+                        <h3 class="blog-title">Anuncio sobre cambios y eliminación de historias</h3>
+                        <p style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.8;">
+                            <b>Narawinette Letters</b> desea informar a sus lectores sobre las decisiones tomadas respecto a las historias <i>Falling for a Lie</i> (Joylada Gang) y <i>Rewriting the Prophecy</i> (JoungDunk).
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.7;">
+                            Debido a los recientes anuncios oficiales de la GMMTV y tras una profunda reflexión personal como fan y autora, se ha tomado la decisión de retirar estas historias de Wattpad. <b>Falling for a Lie</b> volverá en el futuro con nuevas ships protagonistas, mientras que <b>Rewriting the Prophecy</b> ha sido retirada definitivamente.
+                        </p>
+                        <div class="announcement-images">
+                            <div class="announcement-img-container">
+                                <a href="Anuncio1.jpg" target="_blank">
+                                    <img src="Anuncio1.jpg" alt="Anuncio página 1" class="announcement-img">
+                                </a>
+                            </div>
+                            <div class="announcement-img-container">
+                                <a href="Anuncio2.jpg" target="_blank">
+                                    <img src="Anuncio2.jpg" alt="Anuncio página 2" class="announcement-img">
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="view-community" class="page-view">
+        <div class="container">
+            <section style="border-bottom: none; padding-top: 1.5rem;">
+                <h2 class="section-title">Comunidad</h2>
+                <div class="community-wrapper">
+                    <div class="community-form-card">
+                        <h3>Deja tu mensaje o comentario</h3>
+                        <p>Comparte tus teorías, amor por los personajes o un saludo para los capítulos nuevos. ¡Me encanta leerlos!</p>
+                        
+                        <div id="formSuccessAlert" class="form-success-alert">
+                            ✨ ¡Muchas gracias! Tu mensaje ha sido enviado con éxito.
+                        </div>
+
+                        <form onsubmit="handleCommunitySubmit(event)">
+                            <div class="form-group">
+                                <label for="commName">Tu nombre / usuario</label>
+                                <input type="text" id="commName" required placeholder="Ej. LectorDeCorazon">
+                            </div>
+                            <div class="form-group">
+                                <label for="commStory">Historia relacionada (opcional)</label>
+                                <input type="text" id="commStory" placeholder="Ej. Until I Found You">
+                            </div>
+                            <div class="form-group">
+                                <label for="commText">Tu mensaje</label>
+                                <textarea id="commText" rows="5" required placeholder="Escribe aquí tu comentario..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-social" style="width: 100%; margin-top: 0.5rem; text-align: center;">Enviar mensaje</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="storyModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTopBtn" onclick="scrollToTop()" title="Volver arriba">↑</button>
+
+    <footer>
+        <p>&copy; 2026 NARAWINETTE. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        let storiesData = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let visibleCount = 9;
+
+        async function loadStoriesData() {
+            try {
+                const response = await fetch('Data/stories.json');
+                if (!response.ok) throw new Error('No se pudo cargar el archivo JSON');
+                storiesData = await response.json();
+                renderFeaturedStories();
+                renderStories();
+            } catch (error) {
+                console.error('Error al cargar las historias:', error);
+            }
+        }
+
+        function switchView(viewName, targetSectionId = null) {
+            document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+
+            const targetView = document.getElementById(`view-${viewName}`);
+            const targetNav = document.getElementById(`nav-${viewName}`);
+            
+            if (targetView) targetView.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+
+            if (viewName === 'home' && targetSectionId) {
+                setTimeout(() => {
+                    const elem = document.getElementById(targetSectionId);
+                    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function handleCommunitySubmit(event) {
+            event.preventDefault();
+            const alertBox = document.getElementById('formSuccessAlert');
+            alertBox.style.display = 'block';
+            event.target.reset();
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        window.addEventListener('scroll', () => {
+            const btnTop = document.getElementById('backToTopBtn');
+            if (window.scrollY > 400) btnTop.classList.add('visible');
+            else btnTop.classList.remove('visible');
+        });
+
+        function renderFeaturedStories() {
+            const container = document.getElementById('featuredContainer');
+            if (!container || storiesData.length === 0) return;
+            const featuredList = storiesData
+                .filter(s => s.isFeatured)
+                .sort((a, b) => b.readsValue - a.readsValue);
+            container.innerHTML = featuredList.map(story => cardHTML(story, true)).join('');
+        }
+
+        function openStoryModal(id) {
+            const data = storiesData.find(s => s.id === id);
+            if (!data) return;
+            const modal = document.getElementById('storyModal');
+            const body = document.getElementById('modalBody');
+
+            const fullSynopsisFormatted = data.synopsis.split('<br><br>').map(p => `<p style="margin-bottom: 1rem; line-height: 1.8; color: var(--text-main); font-size: 0.98rem;">${p}</p>`).join('');
+
+            let triviaFormatted = '';
+            if (data.trivia && data.trivia.length > 0) {
+                const listItems = data.trivia.map(item => `<li style="margin-bottom: 0.5rem;">${item}</li>`).join('');
+                triviaFormatted = `
+                    <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.6rem; font-size: 1.05rem; letter-spacing: 1px;">Curiosidades y Notas</h4>
+                    <ul style="font-size: 0.9rem; color: var(--text-muted); padding-left: 1.2rem; margin-bottom: 2rem; line-height: 1.6;">${listItems}</ul>
+                `;
+            }
+
+            body.innerHTML = `
+                <div style="font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-turquoise); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">${data.genre} · ${data.status}</div>
+                <h2 style="font-family: var(--font-serif); font-size: 2.2rem; color: var(--text-main); margin-bottom: 0.8rem; font-weight: 600; line-height: 1.2;">${data.title}</h2>
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                    <strong>Pareja:</strong> ${data.pair} | <strong>Capítulos:</strong> ${data.chapters} ${data.reads ? `| <strong>Lecturas:</strong> ${data.reads}` : ''}
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                <h4 style="font-family: var(--font-title); color: var(--accent-turquoise); margin-bottom: 0.8rem; font-size: 1.1rem; letter-spacing: 1px;">Sinopsis Completa</h4>
+                <div style="margin-bottom: 1.8rem;">${fullSynopsisFormatted}</div>
+                ${triviaFormatted}
+                <div style="text-align: right; margin-top: 2rem;">
+                    <a href="${data.link}" target="_blank" class="btn-social" style="display: inline-block;">LEER EN WATTPAD &rarr;</a>
+                </div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('storyModal').style.display = 'none'; }
+
+        function renderGroupedStoriesHtml(storiesList) {
+            const groupedByPair = {};
+            storiesList.forEach(story => {
+                if (!groupedByPair[story.pair]) groupedByPair[story.pair] = [];
+                groupedByPair[story.pair].push(story);
+            });
+
+            const sortedPairs = Object.keys(groupedByPair).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+
+            let htmlContent = '';
+            sortedPairs.forEach(pair => {
+                const stories = groupedByPair[pair].sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+                const pairStoriesHtml = stories.map(story => cardHTML(story, false)).join('');
+                htmlContent += `<div class="couple-group"><h3 class="couple-header">${pair}</h3><div class="stories-grid">${pairStoriesHtml}</div></div>`;
+            });
+            return htmlContent;
+        }
+
+        function handleSearchInput() {
+            const input = document.getElementById('shipSearchInput');
+            searchQuery = input.value.toLowerCase().trim();
+            renderStories();
+        }
+
+        function renderStories() {
+            const container = document.getElementById('storiesContainer');
+            const sagasContainer = document.getElementById('sagasContainer');
+            const loadMoreWrapper = document.getElementById('loadMoreWrapper');
+
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (currentCategory === 'sagas') {
+                container.style.display = 'none';
+                if (sagasContainer) sagasContainer.style.display = 'block';
+                if (loadMoreWrapper) loadMoreWrapper.style.display = 'none';
+
+                const mContent = document.getElementById('sagaMoreThanContent');
+                const vContent = document.getElementById('sagaVecinoversoContent');
+                const tContent = document.getElementById('sagaTrendsContent');
+
+                if (mContent) mContent.innerHTML = renderGroupedStoriesHtml(storiesData.filter(s => s.saga === 'morethan'));
+                if (vContent) vContent.innerHTML = renderGroupedStoriesHtml(storiesData.filter(s => s.saga === 'vecinoverso'));
+                if (tContent) tContent.innerHTML = renderGroupedStoriesHtml(storiesData.filter(s => s.saga === 'trends'));
+                return;
+            }
+
+            if (sagasContainer) sagasContainer.style.display = 'none';
+            container.style.display = 'block';
+
+            let filtered = storiesData.filter(s => {
+                const matchesCategory = (currentCategory === 'all' || s.categories.includes(currentCategory));
+                const matchesSearch = searchQuery === '' || s.pair.toLowerCase().includes(searchQuery) || s.title.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            const groupedByPair = {};
+            filtered.forEach(story => {
+                if (!groupedByPair[story.pair]) groupedByPair[story.pair] = [];
+                groupedByPair[story.pair].push(story);
+            });
+
+            const sortedPairs = Object.keys(groupedByPair).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+
+            let displayedCount = 0;
+            let htmlContent = '';
+            const shouldPaginate = !['publicacion', 'pausa'].includes(currentCategory) && searchQuery === '';
+
+            for (const pair of sortedPairs) {
+                const stories = groupedByPair[pair].sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+                let pairStoriesHtml = '';
+                for (const story of stories) {
+                    if (!shouldPaginate || displayedCount < visibleCount) {
+                        pairStoriesHtml += cardHTML(story, false);
+                        displayedCount++;
+                    }
+                }
+                if (pairStoriesHtml) {
+                    htmlContent += `<div class="couple-group"><h3 class="couple-header">${pair}</h3><div class="stories-grid">${pairStoriesHtml}</div></div>`;
+                }
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 1rem;">No se encontraron historias con ese ship o título. 💔</p>`;
+            } else {
+                container.innerHTML = htmlContent;
+            }
+
+            if (loadMoreWrapper) loadMoreWrapper.style.display = (shouldPaginate && filtered.length > visibleCount) ? 'block' : 'none';
+        }
+
+        function cardHTML(story, isFeaturedSection = false) {
+            const previewText = story.synopsis.replace(/<br\s*[\/]?>/gi, ' ');
+            const cardClass = isFeaturedSection ? 'featured-card' : 'story-card';
+            const badgeHtml = isFeaturedSection && story.reads ? `<div class="reads-badge">🔥 ${story.reads} lecturas</div>` : '';
+
+            return `
+                <div class="${cardClass}" onclick="openStoryModal('${story.id}')">
+                    ${badgeHtml}
+                    <div class="cover-wrapper">
+                        <img src="${story.cover}" alt="${story.title} Cover" class="cover-img">
+                    </div>
+                    <div class="story-genre">${story.genre}</div>
+                    <h3 class="story-title">${story.title}</h3>
+                    <p class="story-desc">${previewText}</p>
+                    <div class="story-footer">
+                        <span>${story.chapters}</span>
+                        <button class="btn-read" onclick="event.stopPropagation(); openStoryModal('${story.id}')">Ver sinopsis &rarr;</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterStories(category, eventObj) {
+            currentCategory = category;
+            visibleCount = 9;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (eventObj && eventObj.target) eventObj.target.classList.add('active');
+            renderStories();
+        }
+
+        function loadMoreStories() { visibleCount += 9; renderStories(); }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('storyModal')) closeModal();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStoriesData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+backend:
+  name: git-gateway
+  branch: main # O el nombre de tu rama principal en GitHub (main o master)
+
+media_folder: "images" # Carpeta donde se guardarán las portadas que subas
+public_folder: "/images"
+
+collections:
+  - name: "stories"
+    label: "Historias"
+    folder: "data" # Carpeta donde se guardará tu archivo de datos
+    create: false
+    identifier_field: "title"
+    format: "json"
+    files:
+      - file: "data/stories.json"
+        name: "stories_data"
+        label: "Catálogo de Obras"
+        fields:
+          - label: "Lista de Historias"
+            name: "stories"
+            widget: "list"
+            fields:
+              - {label: "ID Único", name: "id", widget: "string"}
+              - {label: "Título de la Historia", name: "title", widget: "string"}
+              - {label: "Estado (Ej. Completa, En Publicación)", name: "status", widget: "string"}
+              - label: "Categorías"
+                name: "categories"
+                widget: "select"
+                multiple: true
+                options: ["completa", "oneshot", "publicacion", "pausa", "saga"]
+              - label: "Saga o Universo"
+                name: "saga"
+                widget: "select"
+                options:
+                  - {label: "Ninguna", value: "none"}
+                  - {label: "Universo More Than", value: "morethan"}
+                  - {label: "Vecinoverso", value: "vecinoverso"}
+                  - {label: "Trends of Destiny", value: "trends"}
+              - {label: "Género / Etiquetas", name: "genre", widget: "string"}
+              - {label: "Pareja (Pairing, Ej. PondPhuwin)", name: "pair", widget: "string"}
+              - {label: "Capítulos", name: "chapters", widget: "string"}
+              - {label: "Lecturas (Opcional, Ej. 18.9 K)", name: "reads", widget: "string", required: false}
+              - {label: "Valor numérico de lecturas (para ordenar)", name: "readsValue", widget: "number", value_type: "float", required: false}
+              - {label: "¿Es Destacada en Inicio?", name: "isFeatured", widget: "boolean"}
+              - {label: "Sinopsis", name: "synopsis", widget: "text"}
+              - label: "Curiosidades y Notas (Trivia)"
+                name: "trivia"
+                widget: "list"
+                required: false
+              - {label: "Archivo de Portada (Ej. Portadas1.jpg)", name: "cover", widget: "string"}
+              - {label: "Enlace de Wattpad", name: "link", widget: "string"}
